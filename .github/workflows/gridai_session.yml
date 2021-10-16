@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: '3.8' # min version supported by Grid.ai
       - run: |
-          ssh-keygen -t ed25519 -C "sangkyulee@gmail.com" -N ""
+          ssh-keygen -t ed25519 -C "sangkyulee@gmail.com" -N "" -f ~/.ssh/id_ed25519
       - run: |
           python -m pip install --upgrade pip
       - run: |
