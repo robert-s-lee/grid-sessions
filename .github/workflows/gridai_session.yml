@@ -57,12 +57,12 @@ jobs:
       - run: |
           grid session pause ${SESSION_NAME}
       - run: |
-          SESSION_STATUS=$(grid session | grep " ${SESSION_NAME} " | awk '{print $4}')
+          SESSION_STATUS=$(grid session | awk '{print $2 "," $4}' | grep "${SESSION_NAME}," | awk -F, '{print $2}')
           # pool at 1 min interval
           while [ "${SESSION_STATUS}" != 'paused' ]; do 
             echo "${SESSION_NAME}:${SESSION_STATUS} waiting 60 sec for the next status"
             sleep 60 
-            SESSION_STATUS=$(grid session | grep " ${SESSION_NAME} " | awk '{print $4}')
+            SESSION_STATUS=$(grid session | awk '{print $2 "," $4}' | grep "${SESSION_NAME}," | awk -F, '{print $2}')
           done
           case ${SESSION_STATUS} in
             paused)
@@ -74,12 +74,12 @@ jobs:
       - run: |
           grid session resume ${SESSION_NAME}
       - run: |
-          SESSION_STATUS=$(grid session | grep " ${SESSION_NAME} " | awk '{print $4}')
+          SESSION_STATUS=$(grid session | awk '{print $2 "," $4}' | grep "${SESSION_NAME}," | awk -F, '{print $2}')
           # pool at 1 min interval
           while [ "${SESSION_STATUS}" != 'running' ]; do 
             echo "${SESSION_NAME}:${SESSION_STATUS} waiting 60 sec for the next status"
             sleep 60 
-            SESSION_STATUS=$(grid session | grep " ${SESSION_NAME} " | awk '{print $4}')
+            SESSION_STATUS=$(grid session | awk '{print $2 "," $4}' | grep "${SESSION_NAME}," | awk -F, '{print $2}')
           done
           case ${SESSION_STATUS} in
             running)
@@ -93,10 +93,10 @@ jobs:
       - run: |
           grid session delete ${SESSION_NAME}
       - run: |
-          SESSION_STATUS=$(grid session | grep " ${SESSION_NAME} " | awk '{print $4}')
+          SESSION_STATUS=$(grid session | awk '{print $2 "," $4}' | grep "${SESSION_NAME}," | awk -F, '{print $2}')
           # pool at 1 min interval
           while [ -z "${SESSION_STATUS}" ]; do 
             echo "${SESSION_NAME}:${SESSION_STATUS} waiting 60 sec for the next status"
             sleep 60 
-            SESSION_STATUS=$(grid session | grep " ${SESSION_NAME} " | awk '{print $4}')
+            SESSION_STATUS=$(grid session | awk '{print $2 "," $4}' | grep "${SESSION_NAME}," | awk -F, '{print $2}')
           done           
