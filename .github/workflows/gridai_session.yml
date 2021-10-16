@@ -30,13 +30,14 @@ jobs:
           echo "GRIDAI_SESSION_NAME=${GRIDAI_SESSION_NAME}" >> $GITHUB_ENV
       - run: |
           grid session create --use_spot --name ${GRIDAI_SESSION_NAME} | tee grid.session.log
-          SESSION_NAME=$(grep " name: " grid.session.log | cut -d':' -f 2 | sed -e 's/^[[:space:]]*//')
+          export SESSION_NAME=$(grep " name: " grid.session.log | cut -d':' -f 2 | sed -e 's/^[[:space:]]*//')
           if [[ "${GRIDAI_SESSION_NAME}" != "${SESSION_NAME}" ]]; then
             echo "Error: ${GRIDAI_SESSION_NAME} requested but ${SESSION_NAME} was created"
           fi
           echo "SESSION_NAME=${SESSION_NAME}" >> $GITHUB_ENV
       - run: |
-          SESSION_STATUS=$(grid session | awk '{print $2 "," $4}' | grep "${SESSION_NAME}," | awk -F, '{print $2}')
+          grid session | awk '{print $2 "," $4}'
+          export SESSION_STATUS=$(grid session | awk '{print $2 "," $4}' | grep "${SESSION_NAME}," | awk -F, '{print $2}')
           # pool at 1 min interval
           while [ "${SESSION_STATUS}" != 'running' ]; do 
             echo "${SESSION_NAME}:${SESSION_STATUS} waiting 60 sec for the next status"
@@ -57,7 +58,7 @@ jobs:
       - run: |
           grid session pause ${SESSION_NAME}
       - run: |
-          SESSION_STATUS=$(grid session | awk '{print $2 "," $4}' | grep "${SESSION_NAME}," | awk -F, '{print $2}')
+          export SESSION_STATUS=$(grid session | awk '{print $2 "," $4}' | grep "${SESSION_NAME}," | awk -F, '{print $2}')
           # pool at 1 min interval
           while [ "${SESSION_STATUS}" != 'paused' ]; do 
             echo "${SESSION_NAME}:${SESSION_STATUS} waiting 60 sec for the next status"
@@ -74,7 +75,7 @@ jobs:
       - run: |
           grid session resume ${SESSION_NAME}
       - run: |
-          SESSION_STATUS=$(grid session | awk '{print $2 "," $4}' | grep "${SESSION_NAME}," | awk -F, '{print $2}')
+          export SESSION_STATUS=$(grid session | awk '{print $2 "," $4}' | grep "${SESSION_NAME}," | awk -F, '{print $2}')
           # pool at 1 min interval
           while [ "${SESSION_STATUS}" != 'running' ]; do 
             echo "${SESSION_NAME}:${SESSION_STATUS} waiting 60 sec for the next status"
@@ -93,7 +94,7 @@ jobs:
       - run: |
           grid session delete ${SESSION_NAME}
       - run: |
-          SESSION_STATUS=$(grid session | awk '{print $2 "," $4}' | grep "${SESSION_NAME}," | awk -F, '{print $2}')
+          export SESSION_STATUS=$(grid session | awk '{print $2 "," $4}' | grep "${SESSION_NAME}," | awk -F, '{print $2}')
           # pool at 1 min interval
           while [ -z "${SESSION_STATUS}" ]; do 
             echo "${SESSION_NAME}:${SESSION_STATUS} waiting 60 sec for the next status"
