@@ -23,10 +23,11 @@ jobs:
       - run: |
           pip install lightning-grid --upgrade
       - run: |
+          # session name is truncated.  make it short
           grid login --username ${{ secrets.GRIDAI_USERNAME }} --key ${{ secrets.GRIDAI_KEY }}
           export DT=$(date '+%y%m%d-%H%M%S')
-          export GRIDAI_SESSION_PREFIX=test
-          export GRIDAI_SESSION_NAME="${GRIDAI_SESSION_PREFIX}-${DT}"
+          export GRIDAI_SESSION_PREFIX=s
+          export GRIDAI_SESSION_NAME="${GRIDAI_SESSION_PREFIX}${DT}"
           echo "GRIDAI_SESSION_NAME=${GRIDAI_SESSION_NAME}" >> $GITHUB_ENV
       - run: |
           grid session create --use_spot --name ${GRIDAI_SESSION_NAME} | tee grid.session.log
