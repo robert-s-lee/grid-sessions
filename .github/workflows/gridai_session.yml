@@ -31,7 +31,7 @@ jobs:
       - run: |
           grid session create --use_spot --name ${GRIDAI_SESSION_NAME} | tee grid.session.log
           SESSION_NAME=$(grep " name: " grid.session.log | cut -d':' -f 2 | sed -e 's/^[[:space:]]*//')
-          if [[ "${GRIDAI_SESSION_NAME}" != "${SESSION_NAME}"" ]]; then
+          if [[ "${GRIDAI_SESSION_NAME}" != "${SESSION_NAME}" ]]; then
             echo "Error: ${GRIDAI_SESSION_NAME} requested but ${SESSION_NAME} was created"
           fi
           echo "SESSION_NAME=${SESSION_NAME}" >> $GITHUB_ENV
