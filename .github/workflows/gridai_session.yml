@@ -23,7 +23,7 @@ jobs:
       - run: |
           pip install lightning-grid --upgrade
       - run: |
-          # session name is truncated.  make it short
+          # session name is truncated within github action due to screen size.  make it short
           grid login --username ${{ secrets.GRIDAI_USERNAME }} --key ${{ secrets.GRIDAI_KEY }}
           export DT=$(date '+%y%m%d-%H%M%S')
           export GRIDAI_SESSION_PREFIX=s
@@ -37,7 +37,8 @@ jobs:
           fi
           echo "SESSION_NAME=${SESSION_NAME}" >> $GITHUB_ENV
       - run: |
-          grid session | awk '{print $2 "," $4}'
+          grid session
+      - run: |
           export SESSION_STATUS=$(grid session | awk '{print $2 "," $4}' | grep "${SESSION_NAME}," | awk -F, '{print $2}')
           # pool at 1 min interval
           while [ "${SESSION_STATUS}" != 'running' ]; do 
@@ -97,7 +98,7 @@ jobs:
       - run: |
           export SESSION_STATUS=$(grid session | awk '{print $2 "," $4}' | grep "${SESSION_NAME}," | awk -F, '{print $2}')
           # pool at 1 min interval
-          while [ -z "${SESSION_STATUS}" ]; do 
+          while [ ! -z "${SESSION_STATUS}" ]; do 
             echo "${SESSION_NAME}:${SESSION_STATUS} waiting 60 sec for the next status"
             sleep 60 
             SESSION_STATUS=$(grid session | awk '{print $2 "," $4}' | grep "${SESSION_NAME}," | awk -F, '{print $2}')
