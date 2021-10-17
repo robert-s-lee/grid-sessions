@@ -6,7 +6,7 @@ on:
   schedule:
   # run at 3 min past the hour every day
   # MIN HOUR DOM MON DOW CMD
-    - cron: 3 * * * *
+    - cron: 3 2,10,18 * * *
 
 jobs:
   gridai-session:
